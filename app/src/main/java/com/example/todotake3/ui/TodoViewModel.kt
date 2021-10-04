@@ -1,5 +1,6 @@
 package com.example.todotake3.ui
 
+import android.util.Log
 import androidx.lifecycle.*
 
 import com.example.todotake3.models.Todo
@@ -12,30 +13,45 @@ import java.lang.IllegalArgumentException
 
 class TodoViewModel(private val todoRepository: TodoRepository) : ViewModel() {
 
+    companion object {
+        private val TAG = TodoViewModel::class.java.name
+    }
+
     private var _todos : MutableLiveData<List<Todo>> = MutableLiveData()
-    val todos: LiveData<Resource<List<Todo>>> get() = _todos
-    var start = 0
-    var limit = 10
+    val todos: LiveData<List<Todo>> get() = _todos
+
 
     init {
-        getTodos(start, limit)
+        getTodos()
     }
 
-    private fun getTodos(start: Int, limit: Int){
+    private fun getTodos(){
         viewModelScope.launch {
-            val todos = todoRepository.getTodos(start, limit)
-            _todos.postValue(handleTodoResponse(todos))
+            val todos = todoRepository.getTodos()
+            _todos.postValue(todos)
         }
     }
 
-    private fun handleTodoResponse(response: Response<List<Todo>>) : List<Todo> {
-        if(response.isSuccessful) {
-            response.body()?.let { resultResponse ->
-                return resultResponse
-            }
-        }
-        return Resource.Error(response.message())
-    }
+//    private fun handleTodoResponse(response: Response<List<Todo>>) : List<Todo> {
+////        if(response.isSuccessful) {
+////            response.body()?.let { resultResponse ->
+////                return resultResponse
+////            }
+////        } else {
+////            return emptyList()
+////        }
+//
+//        return try {
+//            if(response.isSuccessful && response.body() != null){
+//                response.body()!!
+//            } else {
+//                emptyList()
+//            }
+//        } catch (ex: Exception) {
+//            Log.d(TAG, ex.toString())
+//            emptyList()
+//        }
+//    }
 
     class TodoViewModelFactory(
         private val todoRepository: TodoRepository

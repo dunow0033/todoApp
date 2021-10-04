@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.todotake3.adapters.TodoAdapter
+import com.example.todotake3.api.ApiManager
 import com.example.todotake3.databinding.FragmentTodoBinding
 import com.example.todotake3.repository.TodoRepository
 import kotlinx.android.synthetic.main.fragment_todo.*
@@ -34,7 +35,7 @@ class TodoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(
             this,
-            TodoViewModel.TodoViewModelFactory(TodoRepository())
+            TodoViewModel.TodoViewModelFactory(TodoRepository(ApiManager()))
         ).get(TodoViewModel::class.java)
 
         binding.todoRv.layoutManager = LinearLayoutManager(requireContext())
